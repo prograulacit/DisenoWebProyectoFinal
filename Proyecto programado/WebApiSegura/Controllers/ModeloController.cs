@@ -8,24 +8,24 @@ using WebApiSegura.Models;
 namespace WebApiSegura.Controllers
 {
     [Authorize]
-    [RoutePrefix("api/marca")]
-    public class MarcaController : ApiController
+    [RoutePrefix("api/modelo")]
+    public class ModeloController : ApiController
     {
         [HttpGet]
         public IHttpActionResult GetId(int id)
         {
-            Marca marca = new Marca();
+            Modelo modelo = new Modelo();
             try
             {
                 using (SqlConnection sqlConnection = new
                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
                 {
                     SqlCommand sqlCommand = new SqlCommand(
-                        @"SELECT MAR_CODIGO, MAR_NOMBRE
-                        FROM MARCA
-                        WHERE MAR_CODIGO = @MAR_CODIGO", sqlConnection);
+                        @"SELECT MOD_CODIGO, MOD_NOMBRE, MOD_COLOR
+                        FROM MODELO
+                        WHERE MOD_CODIGO = @MOD_CODIGO", sqlConnection);
 
-                    sqlCommand.Parameters.AddWithValue("@MAR_CODIGO", id);
+                    sqlCommand.Parameters.AddWithValue("@MOD_CODIGO", id);
 
                     sqlConnection.Open();
 
@@ -33,8 +33,9 @@ namespace WebApiSegura.Controllers
 
                     while (sqlDataReader.Read())
                     {
-                        marca.MAR_CODIGO = sqlDataReader.GetInt32(0);
-                        marca.MAR_NOMBRE = sqlDataReader.GetString(1);
+                        modelo.MOD_CODIGO = sqlDataReader.GetInt32(0);
+                        modelo.MOD_NOMBRE = sqlDataReader.GetString(1);
+                        modelo.MOD_COLOR = sqlDataReader.GetString(2);
                     }
 
                     sqlConnection.Close();
@@ -44,13 +45,13 @@ namespace WebApiSegura.Controllers
             {
                 return InternalServerError(e);
             }
-            return Ok(marca);
+            return Ok(modelo);
         }
 
         [HttpGet]
         public IHttpActionResult GetAll()
         {
-            List<Marca> marcas = new List<Marca>();
+            List<Modelo> modelos = new List<Modelo>();
 
             try
             {
@@ -58,8 +59,8 @@ namespace WebApiSegura.Controllers
                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
                 {
                     SqlCommand sqlCommand = new SqlCommand(
-                        @"SELECT MAR_CODIGO, MAR_NOMBRE
-                        FROM MARCA", sqlConnection);
+                        @"SELECT MOD_CODIGO, MOD_NOMBRE, MOD_COLOR
+                        FROM MODELO", sqlConnection);
 
                     sqlConnection.Open();
 
@@ -67,12 +68,13 @@ namespace WebApiSegura.Controllers
 
                     while (sqlDataReader.Read())
                     {
-                        Marca marca = new Marca()
+                        Modelo modelo = new Modelo()
                         {
-                            MAR_CODIGO = sqlDataReader.GetInt32(0),
-                            MAR_NOMBRE = sqlDataReader.GetString(1)
+                            MOD_CODIGO = sqlDataReader.GetInt32(0),
+                            MOD_NOMBRE = sqlDataReader.GetString(1),
+                            MOD_COLOR= sqlDataReader.GetString(2)
                         };
-                        marcas.Add(marca);
+                        modelos.Add(modelo);
                     }
                     sqlConnection.Close();
                 }
@@ -81,23 +83,23 @@ namespace WebApiSegura.Controllers
             {
                 return InternalServerError(e);
             }
-            return Ok(marcas);
+            return Ok(modelos);
         }
 
         [HttpPost]
         [Route("ingresar")]
-        public IHttpActionResult Ingresar(Marca marca)
+        public IHttpActionResult Ingresar(Modelo modelo)
         {
-            if (marca == null)
+            if (modelo == null)
                 return BadRequest();
 
-            if (RegistrarMarca(marca))
-                return Ok(marca);
+            if (RegistrarModelo(modelo))
+                return Ok(modelo);
             else
                 return InternalServerError();
         }
 
-        private bool RegistrarMarca(Marca marca)
+        private bool RegistrarModelo(Modelo modelo)
         {
             bool resultado = false;
 
@@ -105,10 +107,11 @@ namespace WebApiSegura.Controllers
                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
             {
                 SqlCommand sqlCommand = new SqlCommand(
-                    @"INSERT INTO MARCA (MAR_NOMBRE) 
-                    VALUES(@MAR_NOMBRE)", sqlConnection);
+                    @"INSERT INTO MODELO (MOD_NOMBRE, MOD_COLOR) 
+                    VALUES(@MOD_NOMBRE, @MOD_COLOR)", sqlConnection);
 
-                sqlCommand.Parameters.AddWithValue("@MAR_NOMBRE", marca.MAR_NOMBRE);
+                sqlCommand.Parameters.AddWithValue("@MOD_NOMBRE", modelo.MOD_NOMBRE);
+                sqlCommand.Parameters.AddWithValue("@MOD_COLOR", modelo.MOD_COLOR);
 
                 sqlConnection.Open();
 
@@ -123,19 +126,18 @@ namespace WebApiSegura.Controllers
         }
 
         [HttpPut]
-        public IHttpActionResult Put(Marca marca)
+        public IHttpActionResult Put(Modelo modelo)
         {
-            if (marca == null)
+            if (modelo == null)
                 return BadRequest();
 
-            if (ActualizarMarca(marca))
-                return Ok(marca);
+            if (ActualizarModelo(modelo))
+                return Ok(modelo);
             else
                 return InternalServerError();
-
         }
 
-        private bool ActualizarMarca(Marca marca)
+        private bool ActualizarModelo(Modelo modelo)
         {
             bool resultado = false;
 
@@ -143,12 +145,14 @@ namespace WebApiSegura.Controllers
                   SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
             {
                 SqlCommand sqlCommand = new SqlCommand(
-                    @"UPDATE MARCA SET
-                    MAR_NOMBRE = @MAR_NOMBRE
-                    WHERE MAR_CODIGO = @MAR_CODIGO", sqlConnection);
+                    @"UPDATE MODELO SET
+                    MOD_NOMBRE = @MOD_NOMBRE,
+                    MOD_COLOR = @MOD_COLOR
+                    WHERE MOD_CODIGO = @MOD_CODIGO", sqlConnection);
 
-                sqlCommand.Parameters.AddWithValue("@MAR_CODIGO", marca.MAR_CODIGO);
-                sqlCommand.Parameters.AddWithValue("@MAR_NOMBRE", marca.MAR_NOMBRE);
+                sqlCommand.Parameters.AddWithValue("@MOD_CODIGO", modelo.MOD_CODIGO);
+                sqlCommand.Parameters.AddWithValue("@MOD_NOMBRE", modelo.MOD_NOMBRE);
+                sqlCommand.Parameters.AddWithValue("@MOD_COLOR", modelo.MOD_COLOR);
 
                 sqlConnection.Open();
 
@@ -169,13 +173,13 @@ namespace WebApiSegura.Controllers
             if (id <= 0)
                 return BadRequest();
 
-            if (EliminarMarca(id))
+            if (EliminarModelo(id))
                 return Ok(id);
             else
                 return InternalServerError();
         }
 
-        private bool EliminarMarca(int id)
+        private bool EliminarModelo(int id)
         {
             bool resultado = false;
 
@@ -183,10 +187,10 @@ namespace WebApiSegura.Controllers
                 SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
             {
                 SqlCommand sqlCommand = new SqlCommand(@"
-                    DELETE MARCA
-                    WHERE MAR_CODIGO = @MAR_CODIGO", sqlConnection);
+                    DELETE MODELO
+                    WHERE MOD_CODIGO = @MOD_CODIGO", sqlConnection);
 
-                sqlCommand.Parameters.AddWithValue("@MAR_CODIGO", id);
+                sqlCommand.Parameters.AddWithValue("@MOD_CODIGO", id);
                 sqlConnection.Open();
                 int filasAfectadas = sqlCommand.ExecuteNonQuery();
                 if (filasAfectadas > 0)
