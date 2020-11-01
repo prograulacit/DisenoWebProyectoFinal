@@ -175,14 +175,19 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AutoController.cs" />
+    <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\CombustibleController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
+    <Compile Include="Controllers\EmpleadoController.cs" />
+    <Compile Include="Controllers\GerenteController.cs" />
     <Compile Include="Controllers\HabitacionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HotelController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MarcaController.cs" />
     <Compile Include="Controllers\ModeloController.cs" />
+    <Compile Include="Controllers\ProveedorController.cs" />
+    <Compile Include="Controllers\RentaController.cs" />
     <Compile Include="Controllers\ReservaController.cs" />
     <Compile Include="Controllers\SucursalController.cs" />
     <Compile Include="Controllers\TokenGenerator.cs" />
@@ -192,12 +197,17 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Auto.cs" />
+    <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\Combustible.cs" />
+    <Compile Include="Models\Empleado.cs" />
+    <Compile Include="Models\Gerente.cs" />
     <Compile Include="Models\Habitacion.cs" />
     <Compile Include="Models\Hotel.cs" />
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\Marca.cs" />
     <Compile Include="Models\Modelo.cs" />
+    <Compile Include="Models\Proveedor.cs" />
+    <Compile Include="Models\Renta.cs" />
     <Compile Include="Models\Reserva.cs" />
     <Compile Include="Models\Sucursal.cs" />
     <Compile Include="Models\Usuario.cs" />

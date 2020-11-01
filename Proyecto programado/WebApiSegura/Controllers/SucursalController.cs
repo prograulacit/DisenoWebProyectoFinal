@@ -10,6 +10,8 @@ using WebApiSegura.Models;
 
 namespace WebApiSegura.Controllers
 {
+    [Authorize]
+    [RoutePrefix("api/sucursal")]
     public class SucursalController : ApiController
     {
         [HttpGet]
@@ -66,7 +68,7 @@ namespace WebApiSegura.Controllers
                     SqlCommand sqlCommand =
                         new SqlCommand(@"SELECT SUC_CODIGO, PROV_CODIGO, GER_CODIGO, SUC_NOMBRE,
                                         SUC_DIRECCION, SUC_TELEFONO
-                                        FROM   SUCURSAL", sqlConncetion);
+                                        FROM SUCURSAL", sqlConncetion);
 
                     sqlConncetion.Open();
 
@@ -105,7 +107,7 @@ namespace WebApiSegura.Controllers
                 return BadRequest();
 
             if (RegistrarSucursal(sucursal))
-                return Ok();
+                return Ok(sucursal);
             else
                 return InternalServerError();
         }
@@ -113,37 +115,37 @@ namespace WebApiSegura.Controllers
         private bool RegistrarSucursal(Sucursal sucursal)
         {
             bool resultado = false;
-
-            try
+            using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
             {
-                using (SqlConnection sqlConnection = new
-                        SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
-                {
-                    SqlCommand sqlCommand = new SqlCommand(@"SELECT SUC_CODIGO, PROV_CODIGO, GER_CODIGO, SUC_NOMBRE,
-                                        SUC_DIRECCION, SUC_TELEFONO
-                                        FROM   SUCURSAL WHERE SUC_CODIGO = @SUC_CODIGO", sqlConnection);
+                SqlCommand sqlCommand = new SqlCommand(
+                    @"INSERT INTO SUCURSAL
+                        (PROV_CODIGO
+                        , GER_CODIGO
+                        , SUC_NOMBRE
+                        , SUC_DIRECCION
+                        , SUC_TELEFONO)
+                        VALUES(
+                        @PROV_CODIGO
+                        , @GER_CODIGO
+                        , @SUC_NOMBRE
+                        , @SUC_DIRECCION
+                        , @SUC_TELEFONO)", sqlConnection);
 
+                sqlCommand.Parameters.AddWithValue("@PROV_CODIGO", sucursal.PROV_CODIGO);
+                sqlCommand.Parameters.AddWithValue("@GER_CODIGO", sucursal.GER_CODIGO);
+                sqlCommand.Parameters.AddWithValue("@SUC_NOMBRE", sucursal.SUC_NOMBRE);
+                sqlCommand.Parameters.AddWithValue("@SUC_DIRECCION", sucursal.SUC_DIRECCION);
+                sqlCommand.Parameters.AddWithValue("@SUC_TELEFONO", sucursal.SUC_TELEFONO);
 
-                    sqlCommand.Parameters.AddWithValue("@PROV_CODIGO", sucursal.PROV_CODIGO);
-                    sqlCommand.Parameters.AddWithValue("@GER_CODIGO", sucursal.GER_CODIGO);
-                    sqlCommand.Parameters.AddWithValue("@SUC_NOMBRE", sucursal.SUC_NOMBRE);
-                    sqlCommand.Parameters.AddWithValue("@SUC_DIRECCION", sucursal.SUC_DIRECCION);
-                    sqlCommand.Parameters.AddWithValue("@SUC_TELEFONO", sucursal.SUC_TELEFONO);
+                sqlConnection.Open();
 
-                    sqlConnection.Open();
+                int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                if (filasAfectadas > 0)
+                    resultado = true;
 
-                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                    if (filasAfectadas > 0)
-                        resultado = true;
-
-                    sqlConnection.Close();
-                }
+                sqlConnection.Close();
             }
-            catch (Exception)
-            {
-                throw;
-            }
-
             return resultado;
         }
 
@@ -168,13 +170,14 @@ namespace WebApiSegura.Controllers
                 using (SqlConnection sqlConnection = new
                         SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
                 {
-                    SqlCommand sqlCommand = new SqlCommand(@"UPDATE SUCURSAL SET
-                                                                PROV_CODIGO = @PROV_CODIGO
-                                                                GER_CODIGO = @GER_CODIGO
-                                                                SUC_NOMBRE = @SUC_NOMBRE
-                                                                SUC_DIRECCION = @SUC_DIRECCION
-                                                                SUC_TELEFONO = @SUC_TELEFONO
-                                                                WHERE SUC_CODIGO = @SUC_CODIGO", sqlConnection);
+                    SqlCommand sqlCommand = new SqlCommand(@"
+                    UPDATE SUCURSAL SET
+                    PROV_CODIGO = @PROV_CODIGO,
+                    GER_CODIGO = @GER_CODIGO,
+                    SUC_NOMBRE = @SUC_NOMBRE,
+                    SUC_DIRECCION = @SUC_DIRECCION,
+                    SUC_TELEFONO = @SUC_TELEFONO
+                    WHERE SUC_CODIGO = @SUC_CODIGO", sqlConnection);
 
                     sqlCommand.Parameters.AddWithValue("@SUC_CODIGO", sucursal.SUC_CODIGO);
                     sqlCommand.Parameters.AddWithValue("@PROV_CODIGO", sucursal.PROV_CODIGO);
@@ -203,27 +206,26 @@ namespace WebApiSegura.Controllers
         [HttpDelete]
         public IHttpActionResult Delete(int id)
         {
-            if (id > 0)
+            if (id <= 0)
                 return BadRequest();
 
             if (EliminarSucursal(id))
                 return Ok(id);
             else
                 return InternalServerError();
-
         }
 
         private bool EliminarSucursal(int id)
         {
             bool resultado = false;
 
-            try
-            {
                 using (SqlConnection sqlConnection = new
-                        SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+                        SqlConnection(ConfigurationManager
+                        .ConnectionStrings["RESERVAS"].ConnectionString))
                 {
-                    SqlCommand sqlCommand = new SqlCommand(@"DELETE SUCURSAL
-                                                                WHERE SUC_CODIGO = @SUC_CODIGO", sqlConnection);
+                    SqlCommand sqlCommand = new SqlCommand(
+                        @"DELETE SUCURSAL
+                        WHERE SUC_CODIGO = @SUC_CODIGO", sqlConnection);
 
                     sqlCommand.Parameters.AddWithValue("@SUC_CODIGO", id);
                     sqlConnection.Open();
@@ -232,11 +234,6 @@ namespace WebApiSegura.Controllers
                         resultado = true;
                     sqlConnection.Close();
                 }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
 
             return resultado;
         }
