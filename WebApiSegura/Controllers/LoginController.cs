@@ -42,7 +42,8 @@ namespace WebApiSegura.Controllers
             if (!string.IsNullOrEmpty(usuarioValidado.USU_IDENTIFICACION))
             {
                 var token = TokenGenerator.GenerateTokenJwt(login.Username);
-                return Ok(token);
+                usuarioValidado.CadenaToken = token;
+                return Ok(usuarioValidado);
             }
             else
             {
@@ -50,16 +51,16 @@ namespace WebApiSegura.Controllers
             }
         }
 
-        private Usuario ValidarUsuario (LoginRequest loginRequest)
+        private Usuario ValidarUsuario(LoginRequest loginRequest)
         {
             Usuario usuario = new Usuario();
 
-            using (SqlConnection sqlConnection = new 
+            using (SqlConnection sqlConnection = new
                 SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
             {
-                
+
                 SqlCommand sqlCommand = new SqlCommand(@" SELECT USU_CODIGO, USU_IDENTIFICACION,
-                    USU_NOMBRE, USU_PASSWORD, USU_EMAIL, USU_ESTADO, USU_FECHA_NACIMIENTO, USU_TELEFONO
+                    USU_NOMBRE, USU_PASSWORD, USU_EMAIL, USU_ESTADO, USU_FEC_NAC, USU_TELEFONO
                     FROM USUARIO WHERE USU_IDENTIFICACION = @USU_IDENTIFICACION", sqlConnection);
 
                 sqlCommand.Parameters.AddWithValue("@USU_IDENTIFICACION", loginRequest.Username);
@@ -70,7 +71,7 @@ namespace WebApiSegura.Controllers
 
                 while (sqlDataReader.Read())
                 {
-                    if(loginRequest.Password.Equals(sqlDataReader.GetString(3)))
+                    if (loginRequest.Password.Equals(sqlDataReader.GetString(3)))
                     {
                         usuario.USU_CODIGO = sqlDataReader.GetInt32(0);
                         usuario.USU_IDENTIFICACION = sqlDataReader.GetString(1);
@@ -92,7 +93,7 @@ namespace WebApiSegura.Controllers
 
         [HttpPost]
         [Route("register")]
-        public IHttpActionResult Register (Usuario usuario)
+        public IHttpActionResult Register(Usuario usuario)
         {
             if (usuario == null)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
@@ -105,18 +106,18 @@ namespace WebApiSegura.Controllers
 
                     SqlCommand sqlCommand = new SqlCommand(
                         @" INSERT INTO USUARIO (USU_IDENTIFICACION, USU_NOMBRE, USU_PASSWORD, USU_EMAIL,
-                        USU_FECHA_NACIMIENTO, USU_ESTADO, USU_TELEFONO ) VALUES 
+                        USU_FEC_NAC, USU_ESTADO, USU_TELEFONO ) VALUES 
                         (@USU_IDENTIFICACION, @USU_NOMBRE, @USU_PASSWORD, @USU_EMAIL,
-                        @USU_FECHA_NACIMIENTO, @USU_ESTADO, @USU_TELEFONO)", sqlConnection);
+                        @USU_FEC_NAC, @USU_ESTADO, @USU_TELEFONO)", sqlConnection);
 
                     sqlCommand.Parameters.AddWithValue("@USU_IDENTIFICACION", usuario.USU_IDENTIFICACION);
                     sqlCommand.Parameters.AddWithValue("@USU_NOMBRE", usuario.USU_NOMBRE);
                     sqlCommand.Parameters.AddWithValue("@USU_PASSWORD", usuario.USU_PASSWORD);
                     sqlCommand.Parameters.AddWithValue("@USU_EMAIL", usuario.USU_EMAIL);
-                    sqlCommand.Parameters.AddWithValue("@USU_FECHA_NACIMIENTO", DateTime.Parse(usuario.USU_FEC_NAC.ToString()));
+                    sqlCommand.Parameters.AddWithValue("@USU_FEC_NAC", usuario.USU_FEC_NAC);
                     sqlCommand.Parameters.AddWithValue("@USU_ESTADO", usuario.USU_ESTADO);
                     sqlCommand.Parameters.AddWithValue("@USU_TELEFONO", usuario.USU_TELEFONO);
-                    
+
                     sqlConnection.Open();
 
                     int filasAfectadas = sqlCommand.ExecuteNonQuery();
