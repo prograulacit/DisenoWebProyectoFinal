@@ -60,7 +60,7 @@ namespace WebApiSegura.Controllers
             {
 
                 SqlCommand sqlCommand = new SqlCommand(@" SELECT USU_CODIGO, USU_IDENTIFICACION,
-                    USU_NOMBRE, USU_PASSWORD, USU_EMAIL, USU_ESTADO, USU_FEC_NAC, USU_TELEFONO
+                    USU_NOMBRE, USU_PASSWORD, USU_EMAIL, USU_ESTADO, USU_FECHA_NACIMIENTO, USU_TELEFONO
                     FROM USUARIO WHERE USU_IDENTIFICACION = @USU_IDENTIFICACION", sqlConnection);
 
                 sqlCommand.Parameters.AddWithValue("@USU_IDENTIFICACION", loginRequest.Username);
@@ -79,7 +79,7 @@ namespace WebApiSegura.Controllers
                         usuario.USU_PASSWORD = sqlDataReader.GetString(3);
                         usuario.USU_EMAIL = sqlDataReader.GetString(4);
                         usuario.USU_ESTADO = sqlDataReader.GetString(5);
-                        usuario.USU_FEC_NAC = sqlDataReader.GetDateTime(6);
+                        usuario.USU_FECHA_NACIMIENTO = sqlDataReader.GetDateTime(6);
                         usuario.USU_TELEFONO = sqlDataReader.GetString(7);
                     }
                 }
@@ -106,15 +106,15 @@ namespace WebApiSegura.Controllers
 
                     SqlCommand sqlCommand = new SqlCommand(
                         @" INSERT INTO USUARIO (USU_IDENTIFICACION, USU_NOMBRE, USU_PASSWORD, USU_EMAIL,
-                        USU_FEC_NAC, USU_ESTADO, USU_TELEFONO ) VALUES 
+                        USU_FECHA_NACIMIENTO, USU_ESTADO, USU_TELEFONO ) VALUES 
                         (@USU_IDENTIFICACION, @USU_NOMBRE, @USU_PASSWORD, @USU_EMAIL,
-                        @USU_FEC_NAC, @USU_ESTADO, @USU_TELEFONO)", sqlConnection);
+                        @USU_FECHA_NACIMIENTO, @USU_ESTADO, @USU_TELEFONO)", sqlConnection);
 
                     sqlCommand.Parameters.AddWithValue("@USU_IDENTIFICACION", usuario.USU_IDENTIFICACION);
                     sqlCommand.Parameters.AddWithValue("@USU_NOMBRE", usuario.USU_NOMBRE);
                     sqlCommand.Parameters.AddWithValue("@USU_PASSWORD", usuario.USU_PASSWORD);
                     sqlCommand.Parameters.AddWithValue("@USU_EMAIL", usuario.USU_EMAIL);
-                    sqlCommand.Parameters.AddWithValue("@USU_FEC_NAC", usuario.USU_FEC_NAC);
+                    sqlCommand.Parameters.AddWithValue("@USU_FECHA_NACIMIENTO", usuario.USU_FECHA_NACIMIENTO);
                     sqlCommand.Parameters.AddWithValue("@USU_ESTADO", usuario.USU_ESTADO);
                     sqlCommand.Parameters.AddWithValue("@USU_TELEFONO", usuario.USU_TELEFONO);
 
