@@ -29,7 +29,7 @@ namespace WebApiSegura.Controllers
                             , HAB_NUMERO
                             , HAB_CAPACIDAD
                             , HAB_TIPO
-                            , HAB_DESCRIPCION
+                            , HAB_DESCRIPCCION
                             , HAB_ESTADO, HAB_PRECIO
                             FROM HABITACION 
                             WHERE HAB_CODIGO = @HAB_CODIGO", sqlConnection);
@@ -76,7 +76,7 @@ namespace WebApiSegura.Controllers
                             , HAB_NUMERO
                             , HAB_CAPACIDAD
                             , HAB_TIPO
-                            , HAB_DESCRIPCION
+                            , HAB_DESCRIPCCION
                             , HAB_ESTADO 
                             , HAB_PRECIO
                             FROM HABITACION", sqlConnection);
@@ -140,7 +140,7 @@ namespace WebApiSegura.Controllers
                     , HAB_NUMERO
                     , HAB_CAPACIDAD
                     , HAB_TIPO
-                    , HAB_DESCRIPCION
+                    , HAB_DESCRIPCCION
                     , HAB_ESTADO
                     , HAB_PRECIO)
                     VALUES
@@ -149,7 +149,7 @@ namespace WebApiSegura.Controllers
                     , @HAB_NUMERO
                     , @HAB_CAPACIDAD
                     , @HAB_TIPO
-                    , @HAB_DESCRIPCION
+                    , @HAB_DESCRIPCCION
                     , @HAB_ESTADO
                     , @HAB_PRECIO
                     )", sqlConnection);
@@ -158,7 +158,7 @@ namespace WebApiSegura.Controllers
                 sqlCommand.Parameters.AddWithValue("@HAB_NUMERO", habitacion.HAB_NUMERO);
                 sqlCommand.Parameters.AddWithValue("@HAB_CAPACIDAD", habitacion.HAB_CAPACIDAD);
                 sqlCommand.Parameters.AddWithValue("@HAB_TIPO", habitacion.HAB_TIPO);
-                sqlCommand.Parameters.AddWithValue("@HAB_DESCRIPCION", habitacion.HAB_DESCRIPCION);
+                sqlCommand.Parameters.AddWithValue("@HAB_DESCRIPCCION", habitacion.HAB_DESCRIPCION);
                 sqlCommand.Parameters.AddWithValue("@HAB_ESTADO", habitacion.HAB_ESTADO);
                 sqlCommand.Parameters.AddWithValue("@HAB_PRECIO", habitacion.HAB_PRECIO);
 
@@ -203,7 +203,7 @@ namespace WebApiSegura.Controllers
                         HAB_NUMERO = @HAB_NUMERO,
                         HAB_CAPACIDAD = @HAB_CAPACIDAD,
                         HAB_TIPO = @HAB_TIPO,
-                        HAB_DESCRIPCION = @HAB_DESCRIPCION,
+                        HAB_DESCRIPCCION = @HAB_DESCRIPCCION,
                         HAB_ESTADO = @HAB_ESTADO,
                         HAB_PRECIO = @HAB_PRECIO
                         WHERE HAB_CODIGO = @HAB_CODIGO ", sqlConnection);
@@ -213,7 +213,7 @@ namespace WebApiSegura.Controllers
                 sqlCommand.Parameters.AddWithValue("@HAB_NUMERO", habitacion.HAB_NUMERO);
                 sqlCommand.Parameters.AddWithValue("@HAB_CAPACIDAD", habitacion.HAB_CAPACIDAD);
                 sqlCommand.Parameters.AddWithValue("@HAB_TIPO", habitacion.HAB_TIPO);
-                sqlCommand.Parameters.AddWithValue("@HAB_DESCRIPCION", habitacion.HAB_DESCRIPCION);
+                sqlCommand.Parameters.AddWithValue("@HAB_DESCRIPCCION", habitacion.HAB_DESCRIPCION);
                 sqlCommand.Parameters.AddWithValue("@HAB_ESTADO", habitacion.HAB_ESTADO);
                 sqlCommand.Parameters.AddWithValue("@HAB_PRECIO", habitacion.HAB_PRECIO);
 
