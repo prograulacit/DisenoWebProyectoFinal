@@ -23,7 +23,7 @@ namespace WebApiSegura.Controllers
                 {
                     SqlCommand sqlCommand = new SqlCommand(@"SELECT HOT_CODIGO, HOT_NOMBRE, HOT_EMAIL, 
                                                             HOT_DIRECCION, HOT_TELEFONO, HOT_CATEGORIA
-                                                            FROM   HOTEL WHERE HOT_CODIGO = @HOT_CODIGO",sqlConnection);
+                                                            FROM   HOTEL WHERE HOT_CODIGO = @HOT_CODIGO", sqlConnection);
 
                     sqlCommand.Parameters.AddWithValue("@HOT_CODIGO", id);
 
@@ -31,7 +31,7 @@ namespace WebApiSegura.Controllers
 
                     SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
-                    while(sqlDataReader.Read())
+                    while (sqlDataReader.Read())
                     {
                         hotel.HOT_CODIGO = sqlDataReader.GetInt32(0);
                         hotel.HOT_NOMBRE = sqlDataReader.GetString(1);
@@ -64,7 +64,7 @@ namespace WebApiSegura.Controllers
                 {
                     SqlCommand sqlCommand = new SqlCommand(@"SELECT HOT_CODIGO, HOT_NOMBRE, HOT_EMAIL, 
                                                             HOT_DIRECCION, HOT_TELEFONO, HOT_CATEGORIA
-                                                            FROM   HOTEL",sqlConnection);
+                                                            FROM   HOTEL", sqlConnection);
 
                     sqlConnection.Open();
 
@@ -118,7 +118,7 @@ namespace WebApiSegura.Controllers
             {
                 SqlCommand sqlCommand = new SqlCommand(@"INSERT INTO HOTEL (HOT_NOMBRE, 
                                                         HOT_EMAIL, HOT_DIRECCION, HOT_TELEFONO, HOT_CATEGORIA) VALUES
-                                                        (@HOT_NOMBRE, @HOT_EMAIL, @HOT_DIRECCION, @HOT_TELEFONO, @HOT_CATEGORIA )",sqlConnection);
+                                                        (@HOT_NOMBRE, @HOT_EMAIL, @HOT_DIRECCION, @HOT_TELEFONO, @HOT_CATEGORIA )", sqlConnection);
 
                 sqlCommand.Parameters.AddWithValue("@HOT_NOMBRE", hotel.HOT_NOMBRE);
                 sqlCommand.Parameters.AddWithValue("@HOT_EMAIL", hotel.HOT_EMAIL);
@@ -166,7 +166,7 @@ namespace WebApiSegura.Controllers
                                                             HOT_DIRECCION = @HOT_DIRECCION,
                                                             HOT_TELEFONO = @HOT_TELEFONO,
                                                             HOT_CATEGORIA = @HOT_CATEGORIA
-                                                          WHERE HOT_CODIGO = @HOT_CODIGO ",sqlConnection);
+                                                          WHERE HOT_CODIGO = @HOT_CODIGO ", sqlConnection);
 
                 sqlCommand.Parameters.AddWithValue("@HOT_CODIGO", hotel.HOT_CODIGO);
                 sqlCommand.Parameters.AddWithValue("@HOT_NOMBRE", hotel.HOT_NOMBRE);
@@ -202,23 +202,30 @@ namespace WebApiSegura.Controllers
 
         private bool EliminarHotel(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand(@" DELETE HOTEL
-                                                          WHERE HOT_CODIGO = @HOT_CODIGO ",sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@HOT_CODIGO", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
+                bool resultado = false;
 
-                sqlConnection.Close();
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(@" DELETE HOTEL
+                                                          WHERE HOT_CODIGO = @HOT_CODIGO ", sqlConnection);
+                    sqlCommand.Parameters.AddWithValue("@HOT_CODIGO", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
+
+                    sqlConnection.Close();
+                }
+
+                return resultado;
             }
-
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

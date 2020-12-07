@@ -228,26 +228,33 @@ namespace WebApiSegura.Controllers
 
         private bool eliminarCliente(string id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["Reservas"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand =
-                    new SqlCommand(
-                        @" DELETE CLIENTE
+                bool resultado = false;
+
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["Reservas"].ConnectionString))
+                {
+                    SqlCommand sqlCommand =
+                        new SqlCommand(
+                            @" DELETE CLIENTE
                         WHERE 
                         USU_IDENTIFICACION = @USU_IDENTIFICACION;", sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@USU_IDENTIFICACION", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
+                    sqlCommand.Parameters.AddWithValue("@USU_IDENTIFICACION", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
 
-                sqlConnection.Close();
+                    sqlConnection.Close();
+                }
+
+                return resultado;
             }
-
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

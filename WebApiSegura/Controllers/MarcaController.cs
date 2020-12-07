@@ -177,23 +177,30 @@ namespace WebApiSegura.Controllers
 
         private bool EliminarMarca(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand(@"
+                bool resultado = false;
+
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(@"
                     DELETE MARCA
                     WHERE MAR_CODIGO = @MAR_CODIGO", sqlConnection);
 
-                sqlCommand.Parameters.AddWithValue("@MAR_CODIGO", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
-                sqlConnection.Close();
+                    sqlCommand.Parameters.AddWithValue("@MAR_CODIGO", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
+                    sqlConnection.Close();
+                }
+                return resultado;
             }
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

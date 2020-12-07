@@ -195,23 +195,30 @@ namespace WebApiSegura.Controllers
 
         private bool EliminarProveedor(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["Reservas"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand(@" DELETE PROVEEDOR
+                bool resultado = false;
+
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["Reservas"].ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(@" DELETE PROVEEDOR
                                                           WHERE PROV_CODIGO = @PROV_CODIGO ", sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@PROV_CODIGO", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
+                    sqlCommand.Parameters.AddWithValue("@PROV_CODIGO", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
 
-                sqlConnection.Close();
+                    sqlConnection.Close();
+                }
+
+                return resultado;
             }
-
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

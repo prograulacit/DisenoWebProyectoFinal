@@ -217,7 +217,9 @@ namespace WebApiSegura.Controllers
 
         private bool EliminarSucursal(int id)
         {
-            bool resultado = false;
+            try
+            {
+                bool resultado = false;
 
                 using (SqlConnection sqlConnection = new
                         SqlConnection(ConfigurationManager
@@ -229,13 +231,20 @@ namespace WebApiSegura.Controllers
 
                     sqlCommand.Parameters.AddWithValue("@SUC_CODIGO", id);
                     sqlConnection.Open();
+
                     int filasAfectadas = sqlCommand.ExecuteNonQuery();
+
                     if (filasAfectadas > 0)
                         resultado = true;
                     sqlConnection.Close();
                 }
 
-            return resultado;
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

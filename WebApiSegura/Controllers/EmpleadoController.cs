@@ -202,23 +202,30 @@ namespace WebApiSegura.Controllers
 
         private bool EliminarEmpleado(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["Reservas"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand(@" DELETE EMPLEADO
+                bool resultado = false;
+
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["Reservas"].ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(@" DELETE EMPLEADO
                                                           WHERE EMP_CODIGO = @EMP_CODIGO ", sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@EMP_CODIGO", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
+                    sqlCommand.Parameters.AddWithValue("@EMP_CODIGO", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
 
-                sqlConnection.Close();
+                    sqlConnection.Close();
+                }
+
+                return resultado;
             }
-
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

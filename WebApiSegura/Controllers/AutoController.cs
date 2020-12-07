@@ -228,27 +228,34 @@ namespace WebApiSegura.Controllers
 
         private bool EliminarAuto(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand(@"
+                bool resultado = false;
+
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(@"
                     DELETE AUTOS
                     WHERE AUTO_CODIGO = @AUTO_CODIGO", sqlConnection);
 
-                sqlCommand.Parameters.AddWithValue("@AUTO_CODIGO", id);
+                    sqlCommand.Parameters.AddWithValue("@AUTO_CODIGO", id);
 
-                sqlConnection.Open();
+                    sqlConnection.Open();
 
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
 
-                if (filasAfectadas > 0)
-                    resultado = true;
+                    if (filasAfectadas > 0)
+                        resultado = true;
 
-                sqlConnection.Close();
+                    sqlConnection.Close();
+                }
+                return resultado;
             }
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

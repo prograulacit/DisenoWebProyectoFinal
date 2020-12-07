@@ -72,7 +72,7 @@ namespace WebApiSegura.Controllers
                         {
                             MOD_CODIGO = sqlDataReader.GetInt32(0),
                             MOD_NOMBRE = sqlDataReader.GetString(1),
-                            MOD_COLOR= sqlDataReader.GetString(2)
+                            MOD_COLOR = sqlDataReader.GetString(2)
                         };
                         modelos.Add(modelo);
                     }
@@ -181,23 +181,30 @@ namespace WebApiSegura.Controllers
 
         private bool EliminarModelo(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand(@"
+                bool resultado = false;
+
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(@"
                     DELETE MODELO
                     WHERE MOD_CODIGO = @MOD_CODIGO", sqlConnection);
 
-                sqlCommand.Parameters.AddWithValue("@MOD_CODIGO", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
-                sqlConnection.Close();
+                    sqlCommand.Parameters.AddWithValue("@MOD_CODIGO", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
+                    sqlConnection.Close();
+                }
+                return resultado;
             }
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

@@ -252,26 +252,33 @@ namespace WebApiSegura.Controllers
 
         private bool eliminarReserva(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["Reservas"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand =
-                    new SqlCommand(
-                        @" DELETE RENTA
+                bool resultado = false;
+
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["Reservas"].ConnectionString))
+                {
+                    SqlCommand sqlCommand =
+                        new SqlCommand(
+                            @" DELETE RENTA
                         WHERE 
                         REN_CODIGO = @REN_CODIGO;", sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@REN_CODIGO", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
+                    sqlCommand.Parameters.AddWithValue("@REN_CODIGO", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
 
-                sqlConnection.Close();
+                    sqlConnection.Close();
+                }
+
+                return resultado;
             }
-
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

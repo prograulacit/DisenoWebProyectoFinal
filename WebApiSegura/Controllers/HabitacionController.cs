@@ -244,25 +244,33 @@ namespace WebApiSegura.Controllers
 
         private bool eliminarHabitacion(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = 
-                    new SqlCommand(
-                        @" DELETE HABITACION
-                        WHERE HAB_CODIGO = @HAB_CODIGO ", sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@HAB_CODIGO", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
+                bool resultado = false;
 
-                sqlConnection.Close();
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+                {
+                    SqlCommand sqlCommand =
+                        new SqlCommand(
+                            @" DELETE HABITACION
+                        WHERE HAB_CODIGO = @HAB_CODIGO ", sqlConnection);
+                    sqlCommand.Parameters.AddWithValue("@HAB_CODIGO", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
+
+                    sqlConnection.Close();
+                }
+
+                return resultado;
+            }
+            catch (Exception)
+            {
+                return false;
             }
 
-            return resultado;
         }
     }
 }

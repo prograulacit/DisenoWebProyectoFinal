@@ -69,7 +69,7 @@ namespace WebApiSegura.Controllers
                     {
                         Combustible combustible = new Combustible()
                         {
-                            COMB_CODIGO= sqlDataReader.GetInt32(0),
+                            COMB_CODIGO = sqlDataReader.GetInt32(0),
                             COMB_TIPO = sqlDataReader.GetString(1)
                         };
                         combustibles.Add(combustible);
@@ -178,23 +178,30 @@ namespace WebApiSegura.Controllers
 
         private bool EliminarCombustible(int id)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand(@"
-                    DELETE COMBUSTIBLE
-                    WHERE COMB_CODIGO = @COMB_CODIGO", sqlConnection);   
+                bool resultado = false;
 
-                sqlCommand.Parameters.AddWithValue("@COMB_CODIGO", id);
-                sqlConnection.Open();
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
-                if (filasAfectadas > 0)
-                    resultado = true;
-                sqlConnection.Close();
+                using (SqlConnection sqlConnection = new
+                    SqlConnection(ConfigurationManager.ConnectionStrings["RESERVAS"].ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(@"
+                    DELETE COMBUSTIBLE
+                    WHERE COMB_CODIGO = @COMB_CODIGO", sqlConnection);
+
+                    sqlCommand.Parameters.AddWithValue("@COMB_CODIGO", id);
+                    sqlConnection.Open();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    if (filasAfectadas > 0)
+                        resultado = true;
+                    sqlConnection.Close();
+                }
+                return resultado;
             }
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
