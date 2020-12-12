@@ -122,14 +122,16 @@ namespace WebApiSegura.Controllers
 
         private bool registrarCliente(Cliente cliente)
         {
-            bool resultado = false;
-
-            using (SqlConnection sqlConnection = new
-                   SqlConnection(ConfigurationManager
-                   .ConnectionStrings["Reservas"].ConnectionString))
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand(
-                    @"INSERT INTO CLIENTE (
+                bool resultado = false;
+
+                using (SqlConnection sqlConnection = new
+                       SqlConnection(ConfigurationManager
+                       .ConnectionStrings["Reservas"].ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(
+                        @"INSERT INTO CLIENTE (
                             USU_IDENTIFICACION
                             , CLI_NOMBRE
                             , CLI_APELLIDO1
@@ -144,23 +146,28 @@ namespace WebApiSegura.Controllers
                             , @CLI_DIRECCION
                             , @CLI_TELEFONO)", sqlConnection);
 
-                sqlCommand.Parameters.AddWithValue("@USU_IDENTIFICACION", cliente.USU_IDENTIFICACION);
-                sqlCommand.Parameters.AddWithValue("@CLI_NOMBRE", cliente.CLI_NOMBRE);
-                sqlCommand.Parameters.AddWithValue("@CLI_APELLIDO1", cliente.CLI_APELLIDO1);
-                sqlCommand.Parameters.AddWithValue("@CLI_APELLIDO2", cliente.CLI_APELLIDO2);
-                sqlCommand.Parameters.AddWithValue("@CLI_DIRECCION", cliente.CLI_DIRECCION);
-                sqlCommand.Parameters.AddWithValue("@CLI_TELEFONO", cliente.CLI_TELEFONO);
+                    sqlCommand.Parameters.AddWithValue("@USU_IDENTIFICACION", cliente.USU_IDENTIFICACION);
+                    sqlCommand.Parameters.AddWithValue("@CLI_NOMBRE", cliente.CLI_NOMBRE);
+                    sqlCommand.Parameters.AddWithValue("@CLI_APELLIDO1", cliente.CLI_APELLIDO1);
+                    sqlCommand.Parameters.AddWithValue("@CLI_APELLIDO2", cliente.CLI_APELLIDO2);
+                    sqlCommand.Parameters.AddWithValue("@CLI_DIRECCION", cliente.CLI_DIRECCION);
+                    sqlCommand.Parameters.AddWithValue("@CLI_TELEFONO", cliente.CLI_TELEFONO);
 
-                sqlConnection.Open();
+                    sqlConnection.Open();
 
-                int filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    int filasAfectadas = sqlCommand.ExecuteNonQuery();
 
-                if (filasAfectadas > 0)
-                    resultado = true;
+                    if (filasAfectadas > 0)
+                        resultado = true;
 
-                sqlConnection.Close();
+                    sqlConnection.Close();
+                }
+                return resultado;
             }
-            return resultado;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public IHttpActionResult Put(Cliente cliente)
